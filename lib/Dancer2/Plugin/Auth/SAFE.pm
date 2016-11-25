@@ -6,7 +6,7 @@ use warnings;
 our $VERSION = '0.01';
 
 use Dancer2::Plugin;
-use MooX::Types::MooseLike::Base qw/ InstanceOf /;
+use MooX::Types::MooseLike::Base qw( Str InstanceOf );
 use namespace::autoclean;
 
 has ua => (
@@ -17,14 +17,19 @@ has ua => (
     },
 );
 
+has safe_url => (
+    is          => 'ro',
+    isa         => Str,
+    from_config => 1,
+);
+
 plugin_keywords qw/ require_login logged_in_user /;
 
 sub require_login {
     my ( $plugin, $coderef ) = @_;
 
     return sub {
-        $plugin->app->redirect(
-            'https://safe.thomson.com/login/sso/SSOService?app=dcr-test');
+        $plugin->app->redirect( $plugin->safe_url );
       }
 }
 
