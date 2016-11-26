@@ -4,7 +4,6 @@ use warnings;
 use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
-use lib 't/lib';
 
 BEGIN {
     $ENV{DANCER_CONFDIR}     = 't/lib';
@@ -25,13 +24,16 @@ my $app = TestApp->to_app;
 is( ref $app, 'CODE', 'Got app' );
 
 my $test = Plack::Test->create($app);
-my $res  = $test->request( GET '/' );
 
-ok( $res->is_redirect, 'Redirect' );
-is(
-    $res->header('Location'),
-    'http://--- Put SAFE redirect URL here ---',
-    'Redirect location'
-);
+{
+    my $res = $test->request( GET '/' );
+
+    ok( $res->is_redirect, 'Redirect' );
+    is(
+        $res->header('Location'),
+        'http://--- Put SAFE redirect URL here ---',
+        'Redirect location'
+    );
+}
 
 done_testing;

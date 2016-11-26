@@ -6,7 +6,6 @@ use Plack::Test;
 use HTTP::Request::Common;
 use HTTP::Cookies;
 use Test::MockObject;
-use lib 't/lib';
 
 BEGIN {
     $ENV{DANCER_CONFDIR}     = 't/lib';
