@@ -6,16 +6,8 @@ use warnings;
 our $VERSION = '0.01';
 
 use Dancer2::Plugin;
-use MooX::Types::MooseLike::Base qw( Str InstanceOf );
+use MooX::Types::MooseLike::Base qw( Str );
 use namespace::autoclean;
-
-has ua => (
-    is          => 'ro',
-    isa         => InstanceOf ['LWP::UserAgent'],
-    from_config => sub {
-        LWP::UserAgent->new();
-    },
-);
 
 has safe_url => (
     is          => 'ro',
@@ -23,7 +15,7 @@ has safe_url => (
     from_config => 1,
 );
 
-plugin_keywords qw/ require_login logged_in_user /;
+plugin_keywords qw( require_login logged_in_user );
 
 sub BUILD {
     my ($plugin) = @_;

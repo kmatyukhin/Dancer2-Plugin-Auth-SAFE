@@ -5,25 +5,11 @@ use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
 use HTTP::Cookies;
-use Test::MockObject;
 
 BEGIN {
     $ENV{DANCER_CONFDIR}     = 't/lib';
     $ENV{DANCER_ENVIRONMENT} = 'test';
 }
-
-# my $mock = Test::MockObject->new();
-
-# $mock->set_isa('LWP::UserAgent');
-
-# $mock->set_always(
-#     'request',
-#     HTTP::Response->new(
-#         200, 'OK', [ 'Content-Type' => 'text/html; charset=UTF-8' ], '</>'
-#     )
-# );
-
-# $mock->set_always( 'is_success', 1 );
 
 {
 
@@ -31,12 +17,6 @@ BEGIN {
 
     use Dancer2;
     use Dancer2::Plugin::Auth::SAFE;
-
-    # set plugins => {
-    #     'Auth::SAFE' => {
-    #         ua => $mock,
-    #     },
-    # };
 
     get '/users' => require_login sub {
         my $user = logged_in_user;
