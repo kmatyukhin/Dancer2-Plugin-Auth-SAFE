@@ -27,7 +27,6 @@ my $test = Plack::Test->create($app);
 
 {
     my $res = $test->request( GET '/' );
-
     ok( $res->is_redirect, 'Redirect' );
     is(
         $res->header('Location'),
