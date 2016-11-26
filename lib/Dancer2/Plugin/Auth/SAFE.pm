@@ -25,6 +25,16 @@ has safe_url => (
 
 plugin_keywords qw/ require_login logged_in_user /;
 
+sub BUILD {
+    my ( $plugin ) = @_;
+
+    return $plugin->app->add_route(
+        method => 'post',
+        regexp => '/safe',
+        code   => sub { },
+    );
+}
+
 sub require_login {
     my ( $plugin, $coderef ) = @_;
 

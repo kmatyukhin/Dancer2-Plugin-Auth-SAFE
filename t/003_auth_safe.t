@@ -50,13 +50,18 @@ is( ref $app, 'CODE', 'Got app' );
 
 my $test = Plack::Test->create($app);
 
-my $res = $test->request( GET '/users' );
-
-ok( $res->is_redirect, 'Redirect' );
-is(
-    $res->header('Location'),
-    'https://safe.thomson.com/login/sso/SSOService?app=dcr-test',
-    'Redirect location'
-);
+{
+    my $res = $test->request( GET '/users' );
+    ok( $res->is_redirect, 'Got redirect response' );
+    is(
+        $res->header('Location'),
+        'https://safe.thomson.com/login/sso/SSOService?app=dcr-test',
+        'Redirect location is OK'
+    );
+}
+{
+    my $res = $test->request( POST '/safe' );
+    ok( $res->is_success, 'POST /safe response is OK' );
+}
 
 done_testing;
