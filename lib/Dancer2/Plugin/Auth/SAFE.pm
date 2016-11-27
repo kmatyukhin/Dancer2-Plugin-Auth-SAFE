@@ -96,13 +96,14 @@ sub _authenticate_user {
 sub _timestamp_deviance {
     my ($timestamp) = @_;
 
-    my %digest_time;
-    @digest_time{qw( year month day hour minute second )} =
+    my %date_time;
+    @date_time{qw( year month day hour minute second )} =
       split /:/xms, $timestamp;
 
-    my $current_time = DateTime->now( time_zone => 'GMT' );
+    my $current_time = DateTime->now;
+    my $digest_time  = DateTime->new(%date_time);
 
-    return $current_time->delta_ms( DateTime->new(%digest_time) )->{minutes};
+    return $current_time->delta_ms($digest_time)->{minutes};
 }
 
 1;

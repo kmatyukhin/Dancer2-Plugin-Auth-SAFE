@@ -45,7 +45,7 @@ my $url  = 'http://localhost';
     is( $res->code, 401, 'Wrong digest' );
 }
 {
-    my $dt_past = DateTime->now( time_zone => 'GMT' )->subtract( minutes => 6 );
+    my $dt_past = DateTime->now->subtract( minutes => 6 );
     my $timestamp = $dt_past->strftime('%Y:%m:%d:%H:%M:%S');
     my $digest    = md5_hex( '0123456' . $timestamp . 'YggYu867hkhvNnggs/' );
 

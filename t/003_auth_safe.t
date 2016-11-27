@@ -44,8 +44,7 @@ my $jar  = HTTP::Cookies->new();
     );
 }
 {
-    my $dt = DateTime->now( time_zone => 'GMT' );
-    my $timestamp = $dt->strftime('%Y:%m:%d:%H:%M:%S');
+    my $timestamp = DateTime->now->strftime('%Y:%m:%d:%H:%M:%S');
     my $digest    = md5_hex( '0123456' . $timestamp . 'YggYu867hkhvNnggs/' );
 
     my $req = POST "$url/safe",
