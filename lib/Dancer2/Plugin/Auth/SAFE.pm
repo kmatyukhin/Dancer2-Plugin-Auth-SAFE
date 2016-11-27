@@ -6,7 +6,7 @@ use warnings;
 our $VERSION = '0.01';
 
 use Dancer2::Plugin;
-use MooX::Types::MooseLike::Base qw( Str );
+use Dancer2::Core::Types qw( Str );
 use Digest::MD5 qw( md5_hex );
 use HTTP::Status qw( :constants );
 use DateTime;
@@ -78,7 +78,6 @@ sub _authenticate_user {
             && defined $digest
 
             && $digest eq md5_hex( $uid . $timestamp . $plugin->shared_secret )
-
             && _timestamp_deviance($timestamp) < $MAX_TIMESTAMP_DEVIANCE
           )
         {
