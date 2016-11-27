@@ -5,6 +5,8 @@ use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
 use HTTP::Cookies;
+use DateTime;
+use Digest::MD5 qw( md5_hex );
 
 BEGIN {
     $ENV{DANCER_CONFDIR}     = 't/lib';
@@ -40,7 +42,23 @@ my $url  = 'http://localhost';
         digest    => '1',
       ];
     my $res = $test->request($req);
-    is( $res->code, 401, 'POST /safe response should fail' );
+    is( $res->code, 401, 'Wrong digest' );
+}
+{
+    my $dt_past = DateTime->now( time_zone => 'GMT' )->subtract( minutes => 6 );
+    my $timestamp = $dt_past->strftime('%Y:%m:%d:%H:%M:%S');
+    my $digest    = md5_hex( '0123456' . $timestamp . 'YggYu867hkhvNnggs/' );
+
+    my $req = POST "$url/safe",
+      [
+        uid       => '0123456',
+        firstname => 'John',
+        lastname  => 'Doe',
+        time      => $timestamp,
+        digest    => $digest,
+      ];
+    my $res = $test->request($req);
+    is( $res->code, 401, 'Old timestamp' );
 }
 
 done_testing;

@@ -9,7 +9,11 @@ use Dancer2::Plugin;
 use MooX::Types::MooseLike::Base qw( Str );
 use Digest::MD5 qw( md5_hex );
 use HTTP::Status qw( :constants );
+use DateTime;
+use Const::Fast;
 use namespace::autoclean;
+
+const my $MAX_TIMESTAMP_DEVIANCE => 5;
 
 has safe_url => (
     is          => 'ro',
@@ -72,9 +76,10 @@ sub _authenticate_user {
                defined $uid
             && defined $timestamp
             && defined $digest
-            &&
 
-            $digest eq md5_hex( $uid . $timestamp . $plugin->shared_secret )
+            && $digest eq md5_hex( $uid . $timestamp . $plugin->shared_secret )
+
+            && _timestamp_deviance($timestamp) < $MAX_TIMESTAMP_DEVIANCE
           )
         {
             my $firstname = $params->{firstname};
@@ -86,6 +91,18 @@ sub _authenticate_user {
                 HTTP_UNAUTHORIZED );
         }
       }
+}
+
+sub _timestamp_deviance {
+    my ($timestamp) = @_;
+
+    my %digest_time;
+    @digest_time{qw( year month day hour minute second )} =
+      split /:/xms, $timestamp;
+
+    my $current_time = DateTime->now( time_zone => 'GMT' );
+
+    return $current_time->delta_ms( DateTime->new(%digest_time) )->{minutes};
 }
 
 1;

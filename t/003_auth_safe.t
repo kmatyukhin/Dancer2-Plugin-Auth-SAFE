@@ -5,6 +5,8 @@ use Test::More;
 use Plack::Test;
 use HTTP::Request::Common;
 use HTTP::Cookies;
+use DateTime;
+use Digest::MD5 qw( md5_hex );
 
 BEGIN {
     $ENV{DANCER_CONFDIR}     = 't/lib';
@@ -42,13 +44,17 @@ my $jar  = HTTP::Cookies->new();
     );
 }
 {
+    my $dt = DateTime->now( time_zone => 'GMT' );
+    my $timestamp = $dt->strftime('%Y:%m:%d:%H:%M:%S');
+    my $digest    = md5_hex( '0123456' . $timestamp . 'YggYu867hkhvNnggs/' );
+
     my $req = POST "$url/safe",
       [
         uid       => '0123456',
         firstname => 'John',
         lastname  => 'Doe',
-        time      => '2016:11:26:17:48:40',
-        digest    => '02c5f46a6bc822d1d1d7557269526f1e',
+        time      => $timestamp,
+        digest    => $digest,
       ];
     $jar->add_cookie_header($req);
     my $res = $test->request($req);
