@@ -7,9 +7,17 @@ our $VERSION = '0.01';
 
 use Dancer2::Plugin;
 use MooX::Types::MooseLike::Base qw( Str );
+use Digest::MD5 qw( md5_hex );
+use HTTP::Status qw( :constants );
 use namespace::autoclean;
 
 has safe_url => (
+    is          => 'ro',
+    isa         => Str,
+    from_config => 1,
+);
+
+has shared_secret => (
     is          => 'ro',
     isa         => Str,
     from_config => 1,
@@ -23,7 +31,7 @@ sub BUILD {
     return $plugin->app->add_route(
         method => 'post',
         regexp => '/safe',
-        code   => \&_authenticate_user,
+        code   => _authenticate_user($plugin),
     );
 }
 
@@ -53,10 +61,31 @@ sub logged_in_user {
 sub _authenticate_user {
     my ($plugin) = @_;
 
-    my $request   = $plugin->app->request;
-    my $firstname = $request->params->{firstname};
+    return sub {
+        my ($self) = @_;
 
-    return $plugin->app->session->write( firstname => $firstname );
+        my $params = $self->app->request->params;
+
+        my ( $uid, $timestamp, $digest ) = @{$params}{qw( uid time digest )};
+
+        if (
+               defined $uid
+            && defined $timestamp
+            && defined $digest
+            &&
+
+            $digest eq md5_hex( $uid . $timestamp . $plugin->shared_secret )
+          )
+        {
+            my $firstname = $params->{firstname};
+
+            return $self->app->session->write( firstname => $firstname );
+        }
+        else {
+            return $self->app->send_error( 'Authentication error',
+                HTTP_UNAUTHORIZED );
+        }
+      }
 }
 
 1;
