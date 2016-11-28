@@ -39,13 +39,16 @@ my $jar  = HTTP::Cookies->new();
     $jar->extract_cookies($res);
     is(
         $res->header('Location'),
-        'https://safe.thomson.com/login/sso/SSOService?app=dcr-test',
+        TestApp->config->{plugins}{'Auth::SAFE'}{safe_url},
         'Redirect location is OK'
     );
 }
 {
     my $timestamp = DateTime->now->strftime('%Y:%m:%d:%H:%M:%S');
-    my $digest    = md5_hex( '0123456' . $timestamp . 'YggYu867hkhvNnggs/' );
+    my $digest =
+      md5_hex( '0123456'
+          . $timestamp
+          . TestApp->config->{plugins}{'Auth::SAFE'}{shared_secret} );
 
     my $req = POST "$url/safe",
       [

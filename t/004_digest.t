@@ -47,7 +47,10 @@ my $url  = 'http://localhost';
 {
     my $dt_past = DateTime->now->subtract( minutes => 6 );
     my $timestamp = $dt_past->strftime('%Y:%m:%d:%H:%M:%S');
-    my $digest    = md5_hex( '0123456' . $timestamp . 'YggYu867hkhvNnggs/' );
+    my $digest =
+      md5_hex( '0123456'
+          . $timestamp
+          . TestApp->config->{plugins}{'Auth::SAFE'}{shared_secret} );
 
     my $req = POST "$url/safe",
       [

@@ -30,7 +30,7 @@ my $test = Plack::Test->create($app);
     ok( $res->is_redirect, 'Redirect' );
     is(
         $res->header('Location'),
-        'http://--- Put SAFE redirect URL here ---',
+        TestApp->config->{plugins}{'Auth::SAFE'}{safe_url},
         'Redirect location'
     );
 }
