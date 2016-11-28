@@ -9,4 +9,5 @@ matrix:
       env: COVERAGE=1
 sudo: false
 before_install:
-  - eval $(curl https://travis-perl.github.io/init) --auto
+  - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
+  - source ~/travis-perl-helpers/init --auto
