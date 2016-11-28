@@ -4,6 +4,7 @@ author:
   - 'Konstantin Matyukhin <kmatyukhin@gmail.com>'
 build_requires:
   Dancer2: '0'
+  Devel::Cover: '0'
   HTTP::Cookies: '0'
   HTTP::Request::Common: '0'
   JSON: '0'

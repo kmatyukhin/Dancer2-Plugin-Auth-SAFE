@@ -28,11 +28,12 @@ my %WriteMakefileArgs = (
   },
   "TEST_REQUIRES" => {
     "Dancer2" => 0,
+    "Devel::Cover" => 0,
     "HTTP::Cookies" => 0,
     "HTTP::Request::Common" => 0,
     "JSON" => 0,
     "Plack::Test" => 0,
-    "Test::More" => 0
+    "Test::More" => 0,
   },
   "VERSION" => "0.001",
   "test" => {
@@ -47,6 +48,7 @@ my %FallbackPrereqs = (
   "Dancer2::Core::Types" => 0,
   "Dancer2::Plugin" => 0,
   "DateTime" => 0,
+  "Devel::Cover" => 0,
   "Digest::MD5" => 0,
   "HTTP::Cookies" => 0,
   "HTTP::Request::Common" => 0,

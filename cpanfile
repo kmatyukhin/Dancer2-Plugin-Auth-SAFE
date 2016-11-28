@@ -13,4 +13,5 @@ on test => sub {
     requires 'JSON';
     requires 'Plack::Test';
     requires 'Test::More';
+    requires 'Devel::Cover';
 };
