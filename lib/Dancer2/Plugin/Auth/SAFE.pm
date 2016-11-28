@@ -84,7 +84,8 @@ sub _authenticate_user {
             my $user_info = {
                 map { $_ => $params->{$_} }
                   grep { defined $params->{$_} }
-                  qw{ uid firstname lastname company costcenter email marketgroup paygroup thomslocation }
+                  qw( uid firstname lastname company costcenter
+                  email marketgroup paygroup thomslocation )
             };
 
             return $self->app->session->write( user_info => $user_info );
