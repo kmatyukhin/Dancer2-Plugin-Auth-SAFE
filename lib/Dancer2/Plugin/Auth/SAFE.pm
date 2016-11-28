@@ -111,3 +111,69 @@ sub _timestamp_deviance {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Dancer2::Plugin::Auth::SAFE - Dancer2 authentication plugin for SAFE SSO
+
+=head1 VERSION
+
+version 0.01
+
+=head1 DESCRIPTION
+
+With this plugin you can easily integrate Thomson Reuters SAFE SSO authentication
+into your application.
+
+=head1 SYNOPSIS
+
+Add plugin configuration into your F<config.yml>
+
+  plugins:
+      Auth::SAFE:
+          safe_url: "https://safe-test.thomson.com/login/sso/SSOService?app=app"
+          shared_secret: "fklsjf5GlkKJ!gs/skf"
+
+Define that a user must be logged in to access a route - and find out who is
+logged in with the C<logged_in_user> keyword:
+
+    use Dancer2::Plugin::Auth::SAFE;
+
+    get '/users' => require_login sub {
+        my $user = logged_in_user;
+        return "Hi there, $user->{firstname}";
+    };
+
+=head1 ATTRIBUTES
+
+=head2 safe_url
+
+=head2 shared_secret
+
+=head1 SUBROUTINES/METHODS
+
+=head2 require_login
+
+Used to wrap a route which requires a user to be logged in order to access
+it.
+
+    get '/profile' => require_login sub { .... };
+
+=head2 logged_in_user
+
+Returns a hashref of details of the currently logged-in user, if there is one.
+
+=head1 AUTHOR
+
+Konstantin Matyukhin E<lt>kmatyukhin@gmail.comE<gt>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2016 by Konstantin Matyukhin
+
+This is a free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
