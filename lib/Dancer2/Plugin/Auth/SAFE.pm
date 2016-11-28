@@ -3,7 +3,7 @@ package Dancer2::Plugin::Auth::SAFE;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.001';
 
 use Dancer2::Plugin;
 use Dancer2::Core::Types qw( Str );
@@ -116,11 +116,11 @@ __END__
 
 =head1 NAME
 
-Dancer2::Plugin::Auth::SAFE - Dancer2 authentication plugin for SAFE SSO
+Dancer2::Plugin::Auth::SAFE - Thomson Reuters SAFE SSO authentication plugin for Dancer2
 
 =head1 VERSION
 
-version 0.01
+version 0.001
 
 =head1 DESCRIPTION
 

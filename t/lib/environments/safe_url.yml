@@ -1,3 +1,0 @@
-plugins:
-  Auth::SAFE:
-    safe_url: "http://--- Put SAFE redirect URL here ---"
