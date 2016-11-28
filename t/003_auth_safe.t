@@ -7,11 +7,18 @@ use HTTP::Request::Common;
 use HTTP::Cookies;
 use DateTime;
 use Digest::MD5 qw( md5_hex );
+use JSON qw( encode_json decode_json );
 
 BEGIN {
     $ENV{DANCER_CONFDIR}     = 't/lib';
     $ENV{DANCER_ENVIRONMENT} = 'test';
 }
+
+my $user = {
+    uid       => '0123456',
+    firstname => 'John',
+    lastname  => 'Doe',
+};
 
 {
 
@@ -22,7 +29,7 @@ BEGIN {
 
     get '/users' => require_login sub {
         my $user = logged_in_user;
-        return "Hi there, $user->{firstname}";
+        return encode_json($user);
     };
 }
 
@@ -52,11 +59,9 @@ my $jar  = HTTP::Cookies->new();
 
     my $req = POST "$url/safe",
       [
-        uid       => '0123456',
-        firstname => 'John',
-        lastname  => 'Doe',
-        time      => $timestamp,
-        digest    => $digest,
+        %$user,
+        time   => $timestamp,
+        digest => $digest,
       ];
     $jar->add_cookie_header($req);
     my $res = $test->request($req);
@@ -67,7 +72,7 @@ my $jar  = HTTP::Cookies->new();
     $jar->add_cookie_header($req);
     my $res = $test->request($req);
     ok( !$res->is_redirect, 'Got normal response' );
-    is( $res->content, 'Hi there, John', 'User authenticated' );
+    is_deeply( decode_json($res->content), $user, 'User authenticated' );
 }
 
 done_testing;

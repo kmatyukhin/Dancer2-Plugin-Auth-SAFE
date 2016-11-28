@@ -43,10 +43,10 @@ sub require_login {
     my ( $plugin, $coderef ) = @_;
 
     return sub {
-        my $firstname = $plugin->app->session->read('firstname');
+        my $user_info = $plugin->app->session->read('user_info');
 
-        if ($firstname) {
-            return $coderef->($firstname);
+        if ($user_info) {
+            return $coderef->( $plugin->app );
         }
         else {
             return $plugin->app->redirect( $plugin->safe_url );
@@ -57,9 +57,9 @@ sub require_login {
 sub logged_in_user {
     my ( $plugin, $coderef ) = @_;
 
-    my $firstname = $plugin->app->session->read('firstname');
+    my $user_info = $plugin->app->session->read('user_info');
 
-    return { firstname => $firstname };
+    return $user_info;
 }
 
 sub _authenticate_user {
@@ -81,9 +81,13 @@ sub _authenticate_user {
             && _timestamp_deviance($timestamp) < $MAX_TIMESTAMP_DEVIANCE
           )
         {
-            my $firstname = $params->{firstname};
+            my $user_info = {
+                map { $_ => $params->{$_} }
+                  grep { defined $params->{$_} }
+                  qw{ uid firstname lastname company costcenter email marketgroup paygroup thomslocation }
+            };
 
-            return $self->app->session->write( firstname => $firstname );
+            return $self->app->session->write( user_info => $user_info );
         }
         else {
             return $self->app->send_error( 'Authentication error',
