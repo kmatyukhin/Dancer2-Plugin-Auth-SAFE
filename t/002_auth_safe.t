@@ -66,6 +66,7 @@ my $jar  = HTTP::Cookies->new();
     $jar->add_cookie_header($req);
     my $res = $test->request($req);
     ok( $res->is_success, 'POST /safe response is OK' );
+    is_deeply( decode_json($res->content), $user, 'User authenticated' );
 }
 {
     my $req = GET "$url/users";

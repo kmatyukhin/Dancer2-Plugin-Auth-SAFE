@@ -3,7 +3,7 @@ package Dancer2::Plugin::Auth::SAFE;
 use strict;
 use warnings;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 use Dancer2::Plugin;
 use Dancer2::Core::Types qw( Str );
@@ -43,12 +43,14 @@ sub require_login {
     my ( $plugin, $coderef ) = @_;
 
     return sub {
-        my $user_info = $plugin->app->session->read('user_info');
+        my $session   = $plugin->app->session;
+        my $user_info = $session->read('user_info');
 
         if ($user_info) {
             return $coderef->( $plugin->app );
         }
         else {
+            _store_original_route( $session, $plugin->app->request );
             return $plugin->app->redirect( $plugin->safe_url );
         }
       }
@@ -88,12 +90,15 @@ sub _authenticate_user {
                   email marketgroup paygroup thomslocation )
             };
 
-            return $self->app->session->write( user_info => $user_info );
+            my $session = $self->app->session;
+
+            $session->write( user_info => $user_info );
+
+            $self->app->forward( _extract_original_route($session) );
         }
-        else {
-            return $self->app->send_error( 'Authentication error',
-                HTTP_UNAUTHORIZED );
-        }
+
+        return $self->app->send_error( 'Authentication error',
+            HTTP_UNAUTHORIZED );
       }
 }
 
@@ -110,6 +115,32 @@ sub _timestamp_deviance {
     return $current_time->delta_ms($digest_time)->{minutes};
 }
 
+sub _store_original_route {
+    my ( $session, $request ) = @_;
+
+    $session->write( '__auth_safe_path'   => $request->path );
+    $session->write( '__auth_safe_method' => lc $request->method );
+    $session->write( '__auth_safe_params' => \%{ $request->params } );
+
+    return;
+}
+
+sub _extract_original_route {
+    my ($session) = @_;
+
+    my @route = (
+        $session->read('__auth_safe_path'),
+        $session->read('__auth_safe_params'),
+        { method => $session->read('__auth_safe_method') },
+    );
+
+    for (qw( __auth_safe_path __auth_safe_params __auth_safe_method )) {
+        $session->delete($_);
+    }
+
+    return @route;
+}
+
 1;
 
 __END__
@@ -120,7 +151,7 @@ Dancer2::Plugin::Auth::SAFE - Thomson Reuters SAFE SSO authentication plugin for
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 DESCRIPTION
 
